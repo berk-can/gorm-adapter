@@ -378,6 +378,7 @@ func (a *Adapter) SavePolicy(model model.Model) error {
 	for ptype, ast := range model["p"] {
 		for _, rule := range ast.Policy {
 			line := savePolicyLine(ptype, rule)
+			line.TablePrefix=tablePrefix
 			err := a.db.Create(&line).Error
 			if err != nil {
 				return err
