@@ -1,4 +1,4 @@
-module github.com/casbin/gorm-adapter/v2
+module github.com/berk-can/gorm-adapter/v2
 
 go 1.12
 
