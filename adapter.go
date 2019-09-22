@@ -48,7 +48,8 @@ type Filter struct {
 }
 
 func (c *CasbinRule) TableName() string {
-	return c.TablePrefix + "casbin_rule" //as Gorm keeps table names are plural, and we love consistency
+	return c.TablePrefix
+	// + "casbin_rule" //as Gorm keeps table names are plural, and we love consistency
 }
 
 // Adapter represents the Gorm adapter for policy storage.
@@ -67,6 +68,32 @@ func finalizer(a *Adapter) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func NewAdapterWithName(driverName string, dataSourceName string, tableName string, dbSpecified ...bool) (*Adapter, error) {
+	a := &Adapter{}
+	a.tablePrefix = tableName
+	a.driverName = driverName
+	a.dataSourceName = dataSourceName
+
+	if len(dbSpecified) == 0 {
+		a.dbSpecified = false
+	} else if len(dbSpecified) == 1 {
+		a.dbSpecified = dbSpecified[0]
+	} else {
+		return nil, errors.New("invalid parameter: dbSpecified")
+	}
+
+	// Open the DB, create it if not existed.
+	err := a.open()
+	if err != nil {
+		return nil, err
+	}
+
+	// Call the destructor when the object is released.
+	runtime.SetFinalizer(a, finalizer)
+
+	return a, nil
 }
 
 // NewAdapter is the constructor for Adapter.
