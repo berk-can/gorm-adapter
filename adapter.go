@@ -170,7 +170,7 @@ func (a *Adapter) createDatabase() error {
 	}
 
 	if a.driverName == "postgres" {
-		if err = db.Exec("CREATE DATABASE casbin").Error; err != nil {
+		if err = db.Exec("CREATE DATABASE " + tablePrefix).Error; err != nil {
 			// 42P04 is	duplicate_database
 			if err.(*pq.Error).Code == "42P04" {
 				db.Close()
@@ -178,7 +178,7 @@ func (a *Adapter) createDatabase() error {
 			}
 		}
 	} else if a.driverName != "sqlite3" {
-		err = db.Exec("CREATE DATABASE IF NOT EXISTS casbin").Error
+		err = db.Exec("CREATE DATABASE IF NOT EXISTS " + tablePrefix).Error
 	}
 	if err != nil {
 		db.Close()
@@ -203,11 +203,11 @@ func (a *Adapter) open() error {
 		}
 
 		if a.driverName == "postgres" {
-			db, err = gorm.Open(a.driverName, a.dataSourceName+" dbname=casbin")
+			db, err = gorm.Open(a.driverName, a.dataSourceName+" dbname="+tablePrefix)
 		} else if a.driverName == "sqlite3" {
 			db, err = gorm.Open(a.driverName, a.dataSourceName)
 		} else {
-			db, err = gorm.Open(a.driverName, a.dataSourceName+"casbin")
+			db, err = gorm.Open(a.driverName, a.dataSourceName+tablePrefix)
 		}
 		if err != nil {
 			return err
