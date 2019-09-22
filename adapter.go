@@ -48,8 +48,7 @@ type Filter struct {
 }
 
 func (c *CasbinRule) TableName() string {
-	return c.TablePrefix
-	// + "casbin_rule" //as Gorm keeps table names are plural, and we love consistency
+	return tablePrefix //as Gorm keeps table names are plural, and we love consistency
 }
 
 // Adapter represents the Gorm adapter for policy storage.
@@ -71,8 +70,8 @@ func finalizer(a *Adapter) {
 }
 
 func NewAdapterWithName(driverName string, dataSourceName string, tableName string, dbSpecified ...bool) (*Adapter, error) {
+	tablePrefix=tableName
 	a := &Adapter{}
-	a.tablePrefix = tableName
 	a.driverName = driverName
 	a.dataSourceName = dataSourceName
 
@@ -170,7 +169,7 @@ func (a *Adapter) createDatabase() error {
 	}
 
 	if a.driverName == "postgres" {
-		if err = db.Exec("CREATE DATABASE " + tablePrefix).Error; err != nil {
+		if err = db.Exec("CREATE DATABASE casbin").Error; err != nil {
 			// 42P04 is	duplicate_database
 			if err.(*pq.Error).Code == "42P04" {
 				db.Close()
@@ -178,7 +177,7 @@ func (a *Adapter) createDatabase() error {
 			}
 		}
 	} else if a.driverName != "sqlite3" {
-		err = db.Exec("CREATE DATABASE IF NOT EXISTS " + tablePrefix).Error
+		err = db.Exec("CREATE DATABASE IF NOT EXISTS casbin").Error
 	}
 	if err != nil {
 		db.Close()
@@ -203,11 +202,11 @@ func (a *Adapter) open() error {
 		}
 
 		if a.driverName == "postgres" {
-			db, err = gorm.Open(a.driverName, a.dataSourceName+" dbname="+tablePrefix)
+			db, err = gorm.Open(a.driverName, a.dataSourceName+" dbname=casbin")
 		} else if a.driverName == "sqlite3" {
 			db, err = gorm.Open(a.driverName, a.dataSourceName)
 		} else {
-			db, err = gorm.Open(a.driverName, a.dataSourceName+tablePrefix)
+			db, err = gorm.Open(a.driverName, a.dataSourceName+"casbin")
 		}
 		if err != nil {
 			return err
@@ -378,7 +377,6 @@ func (a *Adapter) SavePolicy(model model.Model) error {
 	for ptype, ast := range model["p"] {
 		for _, rule := range ast.Policy {
 			line := savePolicyLine(ptype, rule)
-			line.TablePrefix=tablePrefix
 			err := a.db.Create(&line).Error
 			if err != nil {
 				return err
