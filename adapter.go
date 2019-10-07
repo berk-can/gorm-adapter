@@ -28,10 +28,10 @@ var tablePrefix string
 
 type CasbinRule struct {
 	TablePrefix string `gorm:"-"`
-	PType       string `gorm:"size:100"`
-	V0          string `gorm:"size:100"`
-	V1          string `gorm:"size:100"`
-	V2          string `gorm:"size:100"`
+	PType       string `gorm:"size:100;primary_key"`
+	V0          string `gorm:"size:100;primary_key"`
+	V1          string `gorm:"size:100;primary_key"`
+	V2          string `gorm:"size:100;primary_key"`
 	V3          string `gorm:"size:100"`
 	V4          string `gorm:"size:100"`
 	V5          string `gorm:"size:100"`
@@ -70,7 +70,7 @@ func finalizer(a *Adapter) {
 }
 
 func NewAdapterWithName(driverName string, dataSourceName string, tableName string, dbSpecified ...bool) (*Adapter, error) {
-	tablePrefix=tableName
+	tablePrefix = tableName
 	a := &Adapter{}
 	a.driverName = driverName
 	a.dataSourceName = dataSourceName
