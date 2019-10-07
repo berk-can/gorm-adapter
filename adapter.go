@@ -18,8 +18,8 @@ import (
 	"errors"
 	"runtime"
 
-	"github.com/casbin/casbin/v2/model"
-	"github.com/casbin/casbin/v2/persist"
+	"github.com/berk-can/casbin/v2/model"
+	"github.com/berk-can/casbin/v2/persist"
 	"github.com/jinzhu/gorm"
 	"github.com/lib/pq"
 )

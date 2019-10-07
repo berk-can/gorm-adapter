@@ -18,8 +18,8 @@ import (
 	"log"
 	"testing"
 
-	"github.com/casbin/casbin/v2"
-	"github.com/casbin/casbin/v2/util"
+	"github.com/berk-can/casbin/v2"
+	"github.com/berk-can/casbin/v2/util"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mssql"
